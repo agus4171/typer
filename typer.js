@@ -139,6 +139,7 @@ var Typer = Backbone.Model.extend({
 		words:new Words(),
 		min_speed:1,
 		max_speed:5,
+		id_interval:null,
 	},
 	
 	initialize: function() {
@@ -151,9 +152,25 @@ var Typer = Backbone.Model.extend({
 	start: function() {
 		var animation_delay = 100;
 		var self = this;
-		setInterval(function() {
-			self.iterate();
-		},animation_delay);
+		if (self.get('id_interval') === null) {
+			var id_interval = setInterval(function() {
+				self.iterate();
+			},animation_delay);
+			self.set('id_interval', id_interval)
+		}
+	},
+
+	pause: function() {
+		clearInterval(this.get('id_interval'));
+		this.set('id_interval', null);
+	},
+	
+	stop: function() {
+		var words = this.get('words');
+		words.forEach(function(word) {
+			console.log(word)
+			words.remove(word)
+		})
 	},
 	
 	iterate: function() {
